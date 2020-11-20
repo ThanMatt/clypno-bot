@@ -1,6 +1,7 @@
 import mongoose from 'mongoose'
 import Discord from 'discord.js'
 import fs from 'fs'
+import Guild from './models/Guild'
 
 const client = new Discord.Client()
 client.commands = new Discord.Collection()
@@ -25,14 +26,37 @@ mongoose.connection.once('open', () => {
 
 client.on('ready', () => {
   console.log(`${client.user.tag} connection: Success`)
-  client.user.setActivity('?help', { type: 'PLAYING' })
 })
 
 client.on('message', async (receivedMessage) => {
-  const { content } = receivedMessage
+  const { content, guild, author } = receivedMessage
 
-  if (content.startsWith('-')) {
-    processCommand(receivedMessage)
+  try {
+    if (guild) {
+      const currentGuild = await Guild.findOne({ guildId: guild.id })
+
+      if (!currentGuild) {
+        if (author === client.user) {
+          return
+        }
+        if (content.startsWith('$')) {
+          processCommand(receivedMessage)
+        }
+      } else {
+        if (author === client.user) {
+          return
+        }
+
+        const guildPrefix = currentGuild.guildPrefix
+
+        if (content.startsWith(guildPrefix)) {
+          processCommand(receivedMessage)
+        }
+      }
+    }
+  } catch (error) {
+    console.error(error)
+    throw error
   }
 })
 
@@ -50,10 +74,13 @@ const processCommand = (receivedMessage) => {
   console.log(`[${new Date(phTime)}] ${receivedMessage.author.id} issued ${primaryCommand} command`)
 
   switch (primaryCommand) {
-    case 'ping':
-      client.commands.get('ping').execute(receivedMessage)
+    case 'channel':
+      client.commands.get('channel').execute(receivedMessage)
       break
-
+    case 'subscribe':
+      const twitchChannel = receivedMessage.content.substr(primaryCommand.length + 2)
+      client.commands.get('subscribe').execute(receivedMessage, { twitchChannel })
+      break
     default:
       break
   }

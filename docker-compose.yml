@@ -5,8 +5,7 @@ services:
     env_file:
       - .env.development
     volumes:
-      - .:/usr/app
-      - /clypno-bot/node_modules
+      - .:/usr/clypno
     ports:
       - 4000:4000
     command: yarn run start:dev

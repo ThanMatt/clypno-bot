@@ -1,0 +1,1 @@
+export { searchTwitchChannel } from './searchTwitchChannel'
