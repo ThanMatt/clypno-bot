@@ -23,6 +23,28 @@ const guildSchema = new Schema({
       displayName: {
         type: String,
         required: true
+      },
+      broadcasterUrl: {
+        type: String,
+        required: true
+      },
+      latestClip: {
+        url: {
+          type: String,
+          default: ''
+        },
+        creatorName: {
+          type: String,
+          default: ''
+        },
+        title: {
+          type: String,
+          default: ''
+        },
+        createdAt: {
+          type: String,
+          default: ''
+        }
       }
     }
   ]

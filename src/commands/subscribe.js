@@ -4,14 +4,14 @@ import { searchTwitchChannel } from '../utils'
 module.exports = {
   name: 'subscribe',
   description: "Subscribes twitch channel's clips",
-  async execute(message, { twitchChannel }) {
+  async execute(message, { twitchName }) {
     try {
       const currentGuild = await Guild.findOne({ guildId: message.guild.id })
 
-      if (!twitchChannel) {
+      if (!twitchName) {
         message.channel.send('Please enter a twitch channel name')
       } else {
-        const searchedTwitchChannel = await searchTwitchChannel(twitchChannel)
+        const searchedTwitchChannel = await searchTwitchChannel(twitchName)
 
         if (!currentGuild) {
           if (searchedTwitchChannel) {

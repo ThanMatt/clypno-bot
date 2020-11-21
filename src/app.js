@@ -72,14 +72,22 @@ const processCommand = (receivedMessage) => {
   }
 
   console.log(`[${new Date(phTime)}] ${receivedMessage.author.id} issued ${primaryCommand} command`)
+  let twitchName
 
   switch (primaryCommand) {
     case 'channel':
       client.commands.get('channel').execute(receivedMessage)
       break
     case 'subscribe':
-      const twitchChannel = receivedMessage.content.substr(primaryCommand.length + 2)
-      client.commands.get('subscribe').execute(receivedMessage, { twitchChannel })
+      twitchName = receivedMessage.content.substr(primaryCommand.length + 2)
+      client.commands.get('subscribe').execute(receivedMessage, { twitchName })
+      break
+    case 'list':
+      client.commands.get('list').execute(receivedMessage)
+      break
+    case 'remove':
+      twitchName = receivedMessage.content.substr(primaryCommand.length + 2)
+      client.commands.get('remove').execute(receivedMessage, { twitchName: twitchName?.toLowerCase() })
       break
     default:
       break
