@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 import Discord from 'discord.js'
 import fs from 'fs'
 import Guild from './models/Guild'
+import { notifyIfUpdated } from './utils'
 
 const client = new Discord.Client()
 client.commands = new Discord.Collection()
@@ -27,6 +28,10 @@ mongoose.connection.once('open', () => {
 client.on('ready', () => {
   console.log(`${client.user.tag} connection: Success`)
 })
+
+setInterval(() => {
+  notifyIfUpdated(client)
+}, 10000)
 
 client.on('message', async (receivedMessage) => {
   const { content, guild, author } = receivedMessage
@@ -88,6 +93,10 @@ const processCommand = (receivedMessage) => {
     case 'remove':
       twitchName = receivedMessage.content.substr(primaryCommand.length + 2)
       client.commands.get('remove').execute(receivedMessage, { twitchName: twitchName?.toLowerCase() })
+      break
+    case 'help':
+      const prefix = receivedMessage.content[0]
+      client.commands.get('help').execute(receivedMessage, { prefix, commands: client.commands })
       break
     default:
       break

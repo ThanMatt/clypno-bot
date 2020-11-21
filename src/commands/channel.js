@@ -2,7 +2,7 @@ import Guild from '../models/Guild'
 
 module.exports = {
   name: 'channel',
-  description: 'Which channel should be notified',
+  description: 'Assigns a discord channel for incoming notifications',
   async execute(message) {
     try {
       const currentGuild = await Guild.findOne({ guildId: message.guild.id })
