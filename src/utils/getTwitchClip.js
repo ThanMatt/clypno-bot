@@ -1,10 +1,13 @@
 import { axios } from '../config'
+import { dateDiff } from '.'
 /**
  * @param {String} broadcasterId
  */
 export const getTwitchClip = async (broadcasterId) => {
   try {
-    const { data } = await axios.get(`/clips?broadcaster_id=${broadcasterId}&started_at=${new Date().toISOString()}`)
+    const { data } = await axios.get(
+      `/clips?broadcaster_id=${broadcasterId}&started_at=${dateDiff(5)}&ended_at=${new Date().toISOString()}`
+    )
     const response = data.data
 
     if (response.length) {
