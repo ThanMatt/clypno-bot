@@ -21,6 +21,8 @@ mongoose.connect(process.env.MONGO_URL, {
   reconnectInterval: 500
 })
 
+mongoose.set('debug', true)
+
 mongoose.connection.once('open', () => {
   console.log('MongoDB connection: Success')
 })
