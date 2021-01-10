@@ -8,6 +8,21 @@ on:
     branches: [develop]
 
 jobs:
+  lint:
+    name: Yarn lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install dependencies
+        run: yarn install
+      - name: Run lint (eslint & prettier)
+        run: yarn lint
+
   build-push:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
     runs-on: ubuntu-latest

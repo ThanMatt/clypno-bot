@@ -6,7 +6,7 @@ module.exports = {
   name: CMD_SUBSCRIBE,
   description: "Subscribes twitch channel's clips",
   arguments: 'twitch_channel',
-  async execute(message, { twitchName }) {
+async execute(message, { twitchName }) {
     try {
       const currentGuild = await Guild.findOne({ guildId: message.guild.id })
 
