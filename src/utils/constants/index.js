@@ -1,0 +1,7 @@
+export const CMD_SET = 'set'
+export const CMD_SUBSCRIBE = 'subscribe'
+export const CMD_LIST = 'list'
+export const CMD_REMOVE = 'remove'
+export const CMD_PREFIX = 'clypnoPrefix'
+export const CMD_HELP = 'help'
+export const CMD_CHANNEL = 'search'

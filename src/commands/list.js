@@ -1,7 +1,8 @@
 import Guild from '../models/Guild'
+import { CMD_LIST } from '../utils/constants'
 
 module.exports = {
-  name: 'list',
+  name: CMD_LIST,
   description: 'Lists down the subscribed twitch channels',
   async execute(message) {
     try {

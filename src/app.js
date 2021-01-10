@@ -3,6 +3,7 @@ import Discord from 'discord.js'
 import fs from 'fs'
 import Guild from './models/Guild'
 import { notifyIfUpdated } from './utils'
+import { CMD_HELP, CMD_SUBSCRIBE, CMD_LIST, CMD_REMOVE, CMD_PREFIX, CMD_SET, CMD_CHANNEL } from './utils/constants'
 
 const client = new Discord.Client()
 client.commands = new Discord.Collection()
@@ -20,8 +21,6 @@ mongoose.connect(process.env.MONGO_URL, {
   reconnectTries: 30,
   reconnectInterval: 500
 })
-
-mongoose.set('debug', true)
 
 mongoose.connection.once('open', () => {
   console.log('MongoDB connection: Success')
@@ -55,7 +54,6 @@ client.on('message', async (receivedMessage) => {
         }
 
         const guildPrefix = currentGuild.guildPrefix
-
         if (content.startsWith(guildPrefix)) {
           processCommand(receivedMessage)
         }
@@ -80,25 +78,44 @@ const processCommand = (receivedMessage) => {
 
   console.log(`[${new Date(phTime)}] ${receivedMessage.author.id} issued ${primaryCommand} command`)
   let twitchName
+  let prefix
 
   switch (primaryCommand) {
-    case 'channel':
-      client.commands.get('channel').execute(receivedMessage)
+    case CMD_SET: // !! set
+      client.commands.get(CMD_SET).execute(receivedMessage)
       break
-    case 'subscribe':
+    case CMD_SUBSCRIBE: // !! subscribe
       twitchName = receivedMessage.content.substr(primaryCommand.length + 2)
-      client.commands.get('subscribe').execute(receivedMessage, { twitchName })
+      client.commands.get(CMD_SUBSCRIBE).execute(receivedMessage, { twitchName })
       break
-    case 'list':
-      client.commands.get('list').execute(receivedMessage)
+    case CMD_LIST: // !! list
+      client.commands.get(CMD_LIST).execute(receivedMessage)
       break
-    case 'remove':
+    case CMD_REMOVE: // !! remove
       twitchName = receivedMessage.content.substr(primaryCommand.length + 2)
-      client.commands.get('remove').execute(receivedMessage, { twitchName: twitchName?.toLowerCase() })
+      client.commands.get(CMD_REMOVE).execute(receivedMessage, { twitchName: twitchName?.toLowerCase() })
       break
-    case 'help':
-      const prefix = receivedMessage.content[0]
-      client.commands.get('help').execute(receivedMessage, { prefix, commands: client.commands })
+    case CMD_PREFIX: // !! prefix
+      if (receivedMessage.guild) {
+        prefix = receivedMessage.content.substr(primaryCommand.length + 2)
+
+        if (prefix.length > 1 || prefix.length < 1) {
+          receivedMessage.channel.send(`Must be at least one character long`)
+        } else {
+          client.commands.get(CMD_PREFIX).execute(receivedMessage, { prefix })
+        }
+      } else {
+        client.users.get(receivedMessage.author.id).send(`You're not in a server 😑`)
+      }
+
+      break
+    case CMD_CHANNEL:
+      twitchName = receivedMessage.content.substr(primaryCommand.length + 2)
+      client.commands.get(CMD_CHANNEL).execute(receivedMessage, { twitchName })
+      break
+    case CMD_HELP: // !! help
+      prefix = receivedMessage.content[0]
+      client.commands.get(CMD_HELP).execute(receivedMessage, { prefix, commands: client.commands })
       break
     default:
       break

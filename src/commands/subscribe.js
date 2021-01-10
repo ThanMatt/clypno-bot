@@ -1,9 +1,11 @@
 import Guild from '../models/Guild'
 import { searchTwitchChannel } from '../utils'
+import { CMD_SUBSCRIBE } from '../utils/constants'
 
 module.exports = {
-  name: 'subscribe',
+  name: CMD_SUBSCRIBE,
   description: "Subscribes twitch channel's clips",
+  arguments: 'twitch_channel',
   async execute(message, { twitchName }) {
     try {
       const currentGuild = await Guild.findOne({ guildId: message.guild.id })
@@ -15,10 +17,16 @@ module.exports = {
 
         if (!currentGuild) {
           if (searchedTwitchChannel) {
+            const twitchChannel = {
+              broadcasterId: searchedTwitchChannel.broadcasterId,
+              latestClip: searchedTwitchChannel.latestClip,
+              displayName: searchedTwitchChannel.displayName,
+              broadcasterUrl: searchedTwitchChannel.broadcasterUrl
+            }
             const newGuild = new Guild({
               guildId: message.guild.id,
               guildPrefix: '$',
-              twitchChannels: [searchedTwitchChannel]
+              twitchChannels: [twitchChannel]
             })
             newGuild.save()
             message.react('✅')
@@ -40,7 +48,13 @@ module.exports = {
             if (currentTwitchChannel) {
               message.channel.send(`You've already subscribed to ${searchedTwitchChannel.displayName}`)
             } else {
-              currentGuild.twitchChannels = [searchedTwitchChannel, ...currentGuild.twitchChannels]
+              const twitchChannel = {
+                broadcasterId: searchedTwitchChannel.broadcasterId,
+                latestClip: searchedTwitchChannel.latestClip,
+                displayName: searchedTwitchChannel.displayName,
+                broadcasterUrl: searchedTwitchChannel.broadcasterUrl
+              }
+              currentGuild.twitchChannels = [twitchChannel, ...currentGuild.twitchChannels]
               currentGuild.save()
               message.react('✅')
             }

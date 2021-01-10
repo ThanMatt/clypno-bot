@@ -1,8 +1,10 @@
 import Guild from '../models/Guild'
+import { CMD_REMOVE } from '../utils/constants'
 
 module.exports = {
-  name: 'remove',
+  name: CMD_REMOVE,
   description: 'Removes subscribed twitch channel',
+  arguments: 'twitch_channel',
   async execute(message, { twitchName }) {
     try {
       const currentGuild = await Guild.findOne({ guildId: message.guild.id })

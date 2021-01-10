@@ -1,7 +1,8 @@
 import Guild from '../models/Guild'
+import { CMD_SET } from '../utils/constants'
 
 module.exports = {
-  name: 'channel',
+  name: CMD_SET,
   description: 'Assigns a discord channel for incoming notifications',
   async execute(message) {
     try {
